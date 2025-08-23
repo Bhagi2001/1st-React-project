@@ -15,7 +15,16 @@ const users = [
 
 const Users = () => {
     return (
-        <UserForm />
+        <Box 
+            sx={{ 
+                width: 'calc(100% - 100px)',
+                margin: '0 auto',
+                marginTop: '100px'
+            }}
+        >
+            <UserForm />
+            <UsersTable rows={users} />
+        </Box>
     );
 }
 
