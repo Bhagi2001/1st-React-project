@@ -20,7 +20,7 @@ app.get('/users', (req, res) => {
 });
 
 app.post('/createuser', (req, res) => {
-    controller.addUser(req.body, (callback) => {
+    controller.createUser(req.body, (callback) => {
         res.send();
     });
 });

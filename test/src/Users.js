@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [submitted, setSubmitted] = useState(false); // submission status
+    const [selectedUser, setselectedUser] = useState({});
+    const [isEdit, setisEdit] = useState(false);
 
     useEffect(() => {
         getUsers();
@@ -22,12 +24,12 @@ const Users = () => {
             });
     };
 
-    const createUser = (data) => {
+    const addUser = (data) => {
         setSubmitted(true); // set submitting to true
 
         const payload = {
             id: data.id,
-            name: data.name
+            name: data.name,
         };
 
         // backend router expects POST /api/createuser (see Backend/router.js)
@@ -35,6 +37,37 @@ const Users = () => {
             .then(() => {
                 getUsers();
                 setSubmitted(false); // reset submitting
+                isEdit(false);
+            })
+            .catch((error) => {
+                console.error("Error adding user:", error);
+            });
+    };
+
+    const updateUser = (data) => {
+        setSubmitted(true); // set submitting to true
+
+        const payload = {
+            id: data.id,
+            name: data.name,
+        };
+
+        // backend router expects POST /api/updateuser (see Backend/router.js)
+        Axios.post("http://localhost:3002/api/updateuser", payload)
+            .then(() => {
+                getUsers();
+                setSubmitted(false); // reset submitting
+                isEdit(false);
+            })
+            .catch((error) => {
+                console.error("Error adding user:", error);
+            });
+    };
+
+    const deleteUser = (data) =>{
+        Axios.post("http://localhost:3002/api/deleteuser", data)
+            .then(() => {
+                getUsers();
             })
             .catch((error) => {
                 console.error("Error adding user:", error);
@@ -50,10 +83,20 @@ const Users = () => {
             }}
         >
             <UserForm 
-                createUser={createUser}
+                addUser={addUser}
+                updateUser={updateUser}
                 submitted={submitted}
+                data={selectedUser}
+                isEdit={isEdit}
             />
-            <UsersTable rows={users} />
+            <UsersTable 
+                rows={users} 
+                selectedUser={data => {
+                    setselectedUser(data);
+                    setisEdit(true);
+                }}
+                deleteUser={data => window.confirm('Are you sure?') && deleteUser(data)}
+            />
         </Box>
     );
 }
