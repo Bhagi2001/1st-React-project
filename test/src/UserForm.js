@@ -1,7 +1,7 @@
 import {Grid, Typography, Input, Button} from "@mui/material";
 import { useState } from "react";
 
-const UserForm = (props) => {
+const UserForm = ({ createUser, submitted }) => {
 
     const [id, setId] = useState(0);
     const [name, setName] = useState('');
@@ -81,8 +81,9 @@ const UserForm = (props) => {
                     backgroundColor: "#00c6e6",
                 },
             }}
+            onClick={() => createUser({id, name})}
         >
-            Submit
+            Add
         </Button>
     </Grid>
   );

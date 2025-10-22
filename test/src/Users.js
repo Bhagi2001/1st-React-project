@@ -6,19 +6,39 @@ import { useEffect, useState } from "react";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
+    const [submitted, setSubmitted] = useState(false); // submission status
 
     useEffect(() => {
         getUsers();
     }, []);
 
-    const  getUsers = () => {
-        Axios.get("http://localhost:3001/api/users")
-        .then((response) => {
-            setUsers(response.data?.response || []);
-        })
-        .catch((error) => {
-            console.error("Error fetching users:", error);
-        });
+    const getUsers = () => {
+        Axios.get("http://localhost:3002/api/users")
+            .then((response) => {
+                setUsers(response.data?.response || []);
+            })
+            .catch((error) => {
+                console.error("Error fetching users:", error);
+            });
+    };
+
+    const createUser = (data) => {
+        setSubmitted(true); // set submitting to true
+
+        const payload = {
+            id: data.id,
+            name: data.name
+        };
+
+        // backend router expects POST /api/createuser (see Backend/router.js)
+        Axios.post("http://localhost:3002/api/createuser", payload)
+            .then(() => {
+                getUsers();
+                setSubmitted(false); // reset submitting
+            })
+            .catch((error) => {
+                console.error("Error adding user:", error);
+            });
     };
 
     return (
@@ -29,7 +49,10 @@ const Users = () => {
                 marginTop: '100px'
             }}
         >
-            <UserForm />
+            <UserForm 
+                createUser={createUser}
+                submitted={submitted}
+            />
             <UsersTable rows={users} />
         </Box>
     );
